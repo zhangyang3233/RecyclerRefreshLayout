@@ -26,8 +26,6 @@ public class RefreshHelper {
     private HeaderViewRecyclerAdapter mHeaderAdapter;
     private RecyclerListAdapter mOriginAdapter;
 
-    //    private InteractionListener mInteractionListener;
-//
     private RefreshEventDetector mRefreshEventDetector;
     private final AutoLoadEventDetector mAutoLoadEventDetector;
 
@@ -40,7 +38,7 @@ public class RefreshHelper {
         init();
     }
 
-    private void init() {
+    public void init() {
         // init recyclerView and adapter
         mRecyclerView = (RecyclerView) mParent.findViewById(R.id.recycler_view);
         mRecyclerView.addOnScrollListener(mAutoLoadEventDetector);
@@ -66,8 +64,17 @@ public class RefreshHelper {
             mRecyclerRefreshLayout.setEnabled(false);
         }
 
-        //init TipsHelper
+    }
+
+    private void initTipsHelper() {
         mTipsHelper = mIRefresher.createTipsHelper();
+    }
+
+    private TipsHelper getTipsHelper(){
+        if(mTipsHelper == null){
+            initTipsHelper();
+        }
+        return mTipsHelper;
     }
 
     public void onDestory(){
@@ -92,7 +99,7 @@ public class RefreshHelper {
 
     public void refresh() {
         if (isFirstPage()) {
-            mTipsHelper.showLoading(true);
+            getTipsHelper().showLoading(true);
         } else {
             mRecyclerRefreshLayout.setRefreshing(true);
         }
@@ -120,23 +127,23 @@ public class RefreshHelper {
 
     public void requestFailure() {
         requestComplete();
-        mTipsHelper.showError(isFirstPage(), new Exception("net error"));
+        getTipsHelper().showError(isFirstPage(), new Exception("net error"));
     }
 
-    protected void requestComplete(){
+    public void requestComplete(){
         mIsLoading = false;
         if (mRecyclerRefreshLayout != null) {
             mRecyclerRefreshLayout.setRefreshing(false);
         }
-        mTipsHelper.hideError();
-        mTipsHelper.hideEmpty();
-        mTipsHelper.hideLoading();
+        getTipsHelper().hideError();
+        getTipsHelper().hideEmpty();
+        getTipsHelper().hideLoading();
         if (mOriginAdapter.isEmpty()) {
-            mTipsHelper.showEmpty();
+            getTipsHelper().showEmpty();
         } else if (mIRefresher.hasMore()) {
-            mTipsHelper.showHasMore();
+            getTipsHelper().showHasMore();
         } else {
-            mTipsHelper.hideHasMore();
+            getTipsHelper().hideHasMore();
         }
     }
 

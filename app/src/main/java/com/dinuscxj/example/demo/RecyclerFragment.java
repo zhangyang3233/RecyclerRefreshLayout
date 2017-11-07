@@ -1,38 +1,21 @@
 package com.dinuscxj.example.demo;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.dinuscxj.example.R;
-import com.dinuscxj.example.tips.DefaultTipsHelper;
 import com.dinuscxj.refresh.RecyclerRefreshLayout;
 import com.dinuscxj.refresh.refresh_helper.adapter.HeaderViewRecyclerAdapter;
 import com.dinuscxj.refresh.refresh_helper.adapter.RecyclerListAdapter;
+import com.dinuscxj.refresh.refresh_helper.ihelper.IRefresher;
 import com.dinuscxj.refresh.refresh_helper.ihelper.RefreshHelper;
-import com.dinuscxj.refresh.refresh_helper.tips.TipsHelper;
 
 public abstract class RecyclerFragment extends Fragment {
-    private boolean mIsLoading;
-
-    private RecyclerView mRecyclerView;
-    private RecyclerRefreshLayout mRecyclerRefreshLayout;
-
-    private TipsHelper mTipsHelper;
-    private HeaderViewRecyclerAdapter mHeaderAdapter;
-    private RecyclerListAdapter mOriginAdapter;
-
-    private InteractionListener mInteractionListener;
-
-    private final RefreshEventDetector mRefreshEventDetector = new RefreshEventDetector();
-    private final AutoLoadEventDetector mAutoLoadEventDetector = new AutoLoadEventDetector();
-
 
     RefreshHelper mRefreshHelper;
 
@@ -45,177 +28,38 @@ public abstract class RecyclerFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initRecyclerView(view);
-        initRecyclerRefreshLayout(view);
-
-        mInteractionListener = createInteraction();
-        mTipsHelper = createTipsHelper();
-
-        refresh();
+        mRefreshHelper = new RefreshHelper(createRefresher(), view);
+        mRefreshHelper.init();
+        mRefreshHelper.refresh();
     }
 
-    private void initRecyclerView(View view) {
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-
-        mRecyclerView.addOnScrollListener(mAutoLoadEventDetector);
-
-        RecyclerView.LayoutManager layoutManager = onCreateLayoutManager();
-        if (layoutManager != null) {
-            mRecyclerView.setLayoutManager(layoutManager);
-        }
-
-        mOriginAdapter = createAdapter();
-        mHeaderAdapter = new HeaderViewRecyclerAdapter(mOriginAdapter);
-        mRecyclerView.setAdapter(mHeaderAdapter);
-        mHeaderAdapter.adjustSpanSize(mRecyclerView);
+    public void refresh(){
+        mRefreshHelper.refresh();
     }
 
-    private void initRecyclerRefreshLayout(View view) {
-        mRecyclerRefreshLayout = (RecyclerRefreshLayout) view.findViewById(R.id.refresh_layout);
-
-        if (mRecyclerRefreshLayout == null) {
-            return;
-        }
-
-        if (allowPullToRefresh()) {
-            mRecyclerRefreshLayout.setNestedScrollingEnabled(true);
-            mRecyclerRefreshLayout.setOnRefreshListener(mRefreshEventDetector);
-        } else {
-            mRecyclerRefreshLayout.setEnabled(false);
-        }
-    }
-
-    @NonNull
-    public abstract RecyclerListAdapter createAdapter();
-
-    protected RecyclerView.LayoutManager onCreateLayoutManager() {
-        return new LinearLayoutManager(getActivity());
-    }
-
-    protected TipsHelper createTipsHelper() {
-        return new DefaultTipsHelper(this);
-    }
-
-    protected InteractionListener createInteraction() {
-        return null;
-    }
+    protected abstract IRefresher createRefresher();
 
     @Override
     public void onDestroyView() {
-        mRecyclerView.removeOnScrollListener(mAutoLoadEventDetector);
+        mRefreshHelper.onDestory();
         super.onDestroyView();
     }
 
     public HeaderViewRecyclerAdapter getHeaderAdapter() {
-        return mHeaderAdapter;
+        return mRefreshHelper.getHeaderAdapter();
     }
 
     public RecyclerListAdapter getOriginAdapter() {
-        return mOriginAdapter;
+        return mRefreshHelper.getOriginAdapter();
     }
 
     public RecyclerRefreshLayout getRecyclerRefreshLayout() {
-        return mRecyclerRefreshLayout;
+        return mRefreshHelper.getRecyclerRefreshLayout();
     }
 
     public RecyclerView getRecyclerView() {
-        return mRecyclerView;
+        return mRefreshHelper.getRecyclerView();
     }
 
-    public boolean allowPullToRefresh() {
-        return true;
-    }
 
-    public void refresh() {
-        if (isFirstPage()) {
-            mTipsHelper.showLoading(true);
-        } else {
-            mRecyclerRefreshLayout.setRefreshing(true);
-        }
-
-        requestRefresh();
-    }
-
-    public boolean isFirstPage() {
-        return mOriginAdapter.getItemCount() <= 0;
-    }
-
-    public class RefreshEventDetector implements RecyclerRefreshLayout.OnRefreshListener {
-
-        @Override
-        public void onRefresh() {
-            requestRefresh();
-        }
-    }
-
-    public class AutoLoadEventDetector extends RecyclerView.OnScrollListener {
-
-        @Override
-        public void onScrolled(RecyclerView view, int dx, int dy) {
-            RecyclerView.LayoutManager manager = view.getLayoutManager();
-            if (manager.getChildCount() > 0) {
-                int count = manager.getItemCount();
-                int last = ((RecyclerView.LayoutParams) manager
-                        .getChildAt(manager.getChildCount() - 1).getLayoutParams()).getViewAdapterPosition();
-
-                if (last == count - 1 && !mIsLoading && mInteractionListener != null) {
-                    requestMore();
-                }
-            }
-        }
-    }
-
-    private void requestRefresh() {
-        if (mInteractionListener != null && !mIsLoading) {
-            mIsLoading = true;
-            mInteractionListener.requestRefresh();
-        }
-    }
-
-    private void requestMore() {
-        if (mInteractionListener != null && mInteractionListener.hasMore() && !mIsLoading) {
-            mIsLoading = true;
-            mInteractionListener.requestMore();
-        }
-    }
-
-    public abstract class InteractionListener {
-        public void requestRefresh() {
-            requestComplete();
-
-            if (mOriginAdapter.isEmpty()) {
-                mTipsHelper.showEmpty();
-            } else if (hasMore()) {
-                mTipsHelper.showHasMore();
-            } else {
-                mTipsHelper.hideHasMore();
-            }
-        }
-
-        public void requestMore() {
-            requestComplete();
-        }
-
-        public void requestFailure() {
-            requestComplete();
-            mTipsHelper.showError(isFirstPage(), new Exception("net error"));
-        }
-
-        protected void requestComplete() {
-            mIsLoading = false;
-
-            if (mRecyclerRefreshLayout != null) {
-                mRecyclerRefreshLayout.setRefreshing(false);
-            }
-
-            mTipsHelper.hideError();
-            mTipsHelper.hideEmpty();
-            mTipsHelper.hideLoading();
-        }
-
-        protected boolean hasMore() {
-//            return mOriginAdapter.getItem(mOriginAdapter.getItemCount() - 1).hasMore();
-            return true;
-        }
-    }
 }

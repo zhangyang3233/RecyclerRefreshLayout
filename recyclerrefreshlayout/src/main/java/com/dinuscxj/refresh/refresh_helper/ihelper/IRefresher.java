@@ -2,7 +2,6 @@ package com.dinuscxj.refresh.refresh_helper.ihelper;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 
 import com.dinuscxj.refresh.refresh_helper.adapter.RecyclerListAdapter;
 import com.dinuscxj.refresh.refresh_helper.tips.TipsHelper;
@@ -12,7 +11,6 @@ import com.dinuscxj.refresh.refresh_helper.tips.TipsHelper;
  */
 
 public interface IRefresher {
-    void initRecylerView(View parent);
 
     TipsHelper createTipsHelper();
 

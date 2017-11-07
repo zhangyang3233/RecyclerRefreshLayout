@@ -21,16 +21,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dinuscxj.example.R;
+import com.dinuscxj.example.model.OpenProjectFactory;
+import com.dinuscxj.example.model.OpenProjectModel;
+import com.dinuscxj.example.tips.DefaultTipsHelper;
+import com.dinuscxj.refresh.refresh_helper.adapter.RecyclerListAdapter;
+import com.dinuscxj.refresh.refresh_helper.ihelper.IRefresher;
+import com.dinuscxj.refresh.refresh_helper.tips.TipsHelper;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.dinuscxj.example.R;
-import com.dinuscxj.refresh.refresh_helper.adapter.RecyclerListAdapter;
-import com.dinuscxj.example.model.OpenProjectFactory;
-import com.dinuscxj.example.model.OpenProjectModel;
-
-public class OpenProjectNormalFragment extends RecyclerFragment {
+public class OpenProjectNormalFragment extends RecyclerFragment implements IRefresher {
     private static final int SIMULATE_UNSPECIFIED = 0;
     private static final int SIMULATE_FRESH_FIRST = 1;
     private static final int SIMULATE_FRESH_NO_DATA = 2;
@@ -89,9 +92,13 @@ public class OpenProjectNormalFragment extends RecyclerFragment {
         super.onViewCreated(view, savedInstanceState);
         getOriginAdapter().setItemList(mItemList);
         getHeaderAdapter().notifyDataSetChanged();
-
         getRecyclerRefreshLayout().setDragDistanceConverter(
-            new ResistanceDragDistanceConvert(getScreenHeight(getActivity())));
+                new ResistanceDragDistanceConvert(getScreenHeight(getActivity())));
+    }
+
+    @Override
+    protected IRefresher createRefresher() {
+        return this;
     }
 
     private static int getScreenHeight(Context context) {
@@ -99,36 +106,6 @@ public class OpenProjectNormalFragment extends RecyclerFragment {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         wm.getDefaultDisplay().getMetrics(displayMetrics);
         return displayMetrics.heightPixels;
-    }
-
-    @Override
-    protected RecyclerView.LayoutManager onCreateLayoutManager() {
-        return new LinearLayoutManager(getActivity());
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-    @NonNull
-    @Override
-    public RecyclerListAdapter createAdapter() {
-        return new RecyclerListAdapter() {
-            {
-                addViewType(OpenProjectModel.class, new ViewHolderFactory<ViewHolder>() {
-                    @Override
-                    public ViewHolder onCreateViewHolder(ViewGroup parent) {
-                        return new ItemViewHolder(parent);
-                    }
-                });
-            }
-        };
-    }
-
-    @Override
-    protected InteractionListener createInteraction() {
-        return new ItemInteractionListener();
     }
 
     private void simulateNetworkRequest(final RequestListener listener) {
@@ -161,47 +138,80 @@ public class OpenProjectNormalFragment extends RecyclerFragment {
         }).start();
     }
 
+    @Override
+    public TipsHelper createTipsHelper() {
+        return new DefaultTipsHelper(this);
+    }
+
+    @Override
+    public void onRefresh() {
+        simulateNetworkRequest(new RequestListener() {
+            @Override
+            public void onSuccess(List<OpenProjectModel> openProjectModels) {
+                mItemList.clear();
+                mItemList.addAll(openProjectModels);
+                getHeaderAdapter().notifyDataSetChanged();
+                mRefreshHelper.requestComplete();
+            }
+
+            @Override
+            public void onFailed() {
+                mRefreshHelper.requestFailure();
+            }
+        });
+    }
+
+    @Override
+    public void onLoadMore(int page) {
+        simulateNetworkRequest(new RequestListener() {
+            @Override
+            public void onSuccess(List<OpenProjectModel> openProjectModels) {
+                mItemList.addAll(openProjectModels);
+                getHeaderAdapter().notifyDataSetChanged();
+                mRefreshHelper.requestComplete();
+            }
+
+            @Override
+            public void onFailed() {
+                mRefreshHelper.requestFailure();
+            }
+        });
+    }
+
+    @Override
+    public boolean hasMore() {
+        return true;
+    }
+
+    @NonNull
+    @Override
+    public RecyclerListAdapter createAdapter() {
+        return new RecyclerListAdapter() {
+            {
+                addViewType(OpenProjectModel.class, new ViewHolderFactory<ViewHolder>() {
+                    @Override
+                    public ViewHolder onCreateViewHolder(ViewGroup parent) {
+                        return new ItemViewHolder(parent);
+                    }
+                });
+            }
+        };
+    }
+
+    @Override
+    public RecyclerView.LayoutManager onCreateLayoutManager() {
+        return new LinearLayoutManager(getActivity());
+    }
+
+    @Override
+    public boolean allowPullToRefresh() {
+        return true;
+    }
+
     private interface RequestListener {
         void onSuccess(List<OpenProjectModel> openProjectModels);
 
         void onFailed();
-    }
-
-    private class ItemInteractionListener extends InteractionListener {
-        @Override
-        public void requestRefresh() {
-            simulateNetworkRequest(new RequestListener() {
-                @Override
-                public void onSuccess(List<OpenProjectModel> openProjectModels) {
-                    mItemList.clear();
-                    mItemList.addAll(openProjectModels);
-                    getHeaderAdapter().notifyDataSetChanged();
-                    ItemInteractionListener.super.requestRefresh();
-                }
-
-                @Override
-                public void onFailed() {
-                    ItemInteractionListener.super.requestFailure();
-                }
-            });
-        }
-
-        @Override
-        public void requestMore() {
-            simulateNetworkRequest(new RequestListener() {
-                @Override
-                public void onSuccess(List<OpenProjectModel> openProjectModels) {
-                    mItemList.addAll(openProjectModels);
-                    getHeaderAdapter().notifyDataSetChanged();
-                    ItemInteractionListener.super.requestMore();
-                }
-
-                @Override
-                public void onFailed() {
-                    ItemInteractionListener.super.requestFailure();
-                }
-            });
-        }
     }
 
     private class ItemViewHolder extends RecyclerListAdapter.ViewHolder<OpenProjectModel> {
