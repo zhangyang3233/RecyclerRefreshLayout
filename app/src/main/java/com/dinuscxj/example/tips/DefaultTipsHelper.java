@@ -18,12 +18,12 @@ import com.dinuscxj.refresh.refresh_helper.tips.TipsUtils;
 
 public class DefaultTipsHelper implements TipsHelper {
 
-    protected final RecyclerFragment<?> mFragment;
+    protected final RecyclerFragment mFragment;
     protected final RecyclerView mRecyclerView;
     protected final RecyclerRefreshLayout mRefreshLayout;
     protected final ImageView mLoadingView;
 
-    public DefaultTipsHelper(RecyclerFragment<?> fragment) {
+    public DefaultTipsHelper(RecyclerFragment fragment) {
         mFragment = fragment;
         mRecyclerView = fragment.getRecyclerView();
         mRefreshLayout = fragment.getRecyclerRefreshLayout();

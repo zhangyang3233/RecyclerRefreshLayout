@@ -1,11 +1,7 @@
 package com.dinuscxj.example.model;
 
-import android.text.TextUtils;
-
-public class OpenProjectModel implements CursorModel{
+public class OpenProjectModel {
     public static final String MORE_CURSOR = "more_cursor";
-
-    private final String mCursor;
 
     private final String mTitle;
     private final String mContent;
@@ -13,8 +9,6 @@ public class OpenProjectModel implements CursorModel{
     private final String mColor;
 
     public OpenProjectModel(String mTitle, String mContent, String mAuthor, String mColor) {
-        this.mCursor = MORE_CURSOR;
-
         this.mTitle = mTitle;
         this.mContent = mContent;
         this.mAuthor = mAuthor;
@@ -41,8 +35,4 @@ public class OpenProjectModel implements CursorModel{
         return mColor;
     }
 
-    @Override
-    public boolean hasMore() {
-        return !TextUtils.isEmpty(mCursor);
-    }
 }

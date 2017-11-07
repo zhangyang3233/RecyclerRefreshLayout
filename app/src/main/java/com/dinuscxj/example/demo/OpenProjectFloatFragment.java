@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class OpenProjectFloatFragment extends RecyclerFragment<OpenProjectModel> {
+public class OpenProjectFloatFragment extends RecyclerFragment {
     private static final int SIMULATE_UNSPECIFIED = 0;
     private static final int SIMULATE_FRESH_FIRST = 1;
     private static final int SIMULATE_FRESH_NO_DATA = 2;

@@ -11,14 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dinuscxj.example.R;
+import com.dinuscxj.example.tips.DefaultTipsHelper;
+import com.dinuscxj.refresh.RecyclerRefreshLayout;
 import com.dinuscxj.refresh.refresh_helper.adapter.HeaderViewRecyclerAdapter;
 import com.dinuscxj.refresh.refresh_helper.adapter.RecyclerListAdapter;
-import com.dinuscxj.example.model.CursorModel;
-import com.dinuscxj.example.tips.DefaultTipsHelper;
+import com.dinuscxj.refresh.refresh_helper.ihelper.RefreshHelper;
 import com.dinuscxj.refresh.refresh_helper.tips.TipsHelper;
-import com.dinuscxj.refresh.RecyclerRefreshLayout;
 
-public abstract class RecyclerFragment<MODEL extends CursorModel> extends Fragment {
+public abstract class RecyclerFragment extends Fragment {
     private boolean mIsLoading;
 
     private RecyclerView mRecyclerView;
@@ -26,12 +26,15 @@ public abstract class RecyclerFragment<MODEL extends CursorModel> extends Fragme
 
     private TipsHelper mTipsHelper;
     private HeaderViewRecyclerAdapter mHeaderAdapter;
-    private RecyclerListAdapter<MODEL, ?> mOriginAdapter;
+    private RecyclerListAdapter mOriginAdapter;
 
     private InteractionListener mInteractionListener;
 
     private final RefreshEventDetector mRefreshEventDetector = new RefreshEventDetector();
     private final AutoLoadEventDetector mAutoLoadEventDetector = new AutoLoadEventDetector();
+
+
+    RefreshHelper mRefreshHelper;
 
     @Nullable
     @Override
@@ -107,7 +110,7 @@ public abstract class RecyclerFragment<MODEL extends CursorModel> extends Fragme
         return mHeaderAdapter;
     }
 
-    public RecyclerListAdapter<MODEL, ?> getOriginAdapter() {
+    public RecyclerListAdapter getOriginAdapter() {
         return mOriginAdapter;
     }
 
@@ -211,7 +214,8 @@ public abstract class RecyclerFragment<MODEL extends CursorModel> extends Fragme
         }
 
         protected boolean hasMore() {
-            return mOriginAdapter.getItem(mOriginAdapter.getItemCount() - 1).hasMore();
+//            return mOriginAdapter.getItem(mOriginAdapter.getItemCount() - 1).hasMore();
+            return true;
         }
     }
 }

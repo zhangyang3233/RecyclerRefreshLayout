@@ -30,7 +30,7 @@ import com.dinuscxj.refresh.refresh_helper.adapter.RecyclerListAdapter;
 import com.dinuscxj.example.model.OpenProjectFactory;
 import com.dinuscxj.example.model.OpenProjectModel;
 
-public class OpenProjectNormalFragment extends RecyclerFragment<OpenProjectModel> {
+public class OpenProjectNormalFragment extends RecyclerFragment {
     private static final int SIMULATE_UNSPECIFIED = 0;
     private static final int SIMULATE_FRESH_FIRST = 1;
     private static final int SIMULATE_FRESH_NO_DATA = 2;
