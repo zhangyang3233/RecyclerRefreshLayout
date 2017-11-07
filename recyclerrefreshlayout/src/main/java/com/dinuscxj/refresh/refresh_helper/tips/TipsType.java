@@ -1,8 +1,9 @@
-package com.dinuscxj.example.tips;
+package com.dinuscxj.refresh.refresh_helper.tips;
 
 import android.content.Context;
 
-import com.dinuscxj.example.R;
+import com.dinuscxj.recyclerrefreshlayout.R;
+
 
 public enum TipsType {
 

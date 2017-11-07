@@ -11,11 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dinuscxj.example.R;
-import com.dinuscxj.example.adapter.HeaderViewRecyclerAdapter;
-import com.dinuscxj.example.adapter.RecyclerListAdapter;
+import com.dinuscxj.refresh.refresh_helper.adapter.HeaderViewRecyclerAdapter;
+import com.dinuscxj.refresh.refresh_helper.adapter.RecyclerListAdapter;
 import com.dinuscxj.example.model.CursorModel;
 import com.dinuscxj.example.tips.DefaultTipsHelper;
-import com.dinuscxj.example.tips.TipsHelper;
+import com.dinuscxj.refresh.refresh_helper.tips.TipsHelper;
 import com.dinuscxj.refresh.RecyclerRefreshLayout;
 
 public abstract class RecyclerFragment<MODEL extends CursorModel> extends Fragment {

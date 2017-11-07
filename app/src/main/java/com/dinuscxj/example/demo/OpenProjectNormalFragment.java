@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.dinuscxj.example.R;
-import com.dinuscxj.example.adapter.RecyclerListAdapter;
+import com.dinuscxj.refresh.refresh_helper.adapter.RecyclerListAdapter;
 import com.dinuscxj.example.model.OpenProjectFactory;
 import com.dinuscxj.example.model.OpenProjectModel;
 

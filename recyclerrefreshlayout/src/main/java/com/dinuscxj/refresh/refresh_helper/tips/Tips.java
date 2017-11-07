@@ -1,4 +1,4 @@
-package com.dinuscxj.example.tips;
+package com.dinuscxj.refresh.refresh_helper.tips;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;

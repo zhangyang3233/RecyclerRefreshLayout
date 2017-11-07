@@ -1,4 +1,4 @@
-package com.dinuscxj.example.adapter;
+package com.dinuscxj.refresh.refresh_helper.adapter;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;

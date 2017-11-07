@@ -1,4 +1,4 @@
-package com.dinuscxj.example.adapter;
+package com.dinuscxj.refresh.refresh_helper.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;

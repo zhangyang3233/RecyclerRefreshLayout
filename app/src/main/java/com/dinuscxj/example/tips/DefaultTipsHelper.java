@@ -12,6 +12,9 @@ import com.dinuscxj.example.R;
 import com.dinuscxj.example.demo.RecyclerFragment;
 import com.dinuscxj.example.utils.DensityUtil;
 import com.dinuscxj.refresh.RecyclerRefreshLayout;
+import com.dinuscxj.refresh.refresh_helper.tips.TipsHelper;
+import com.dinuscxj.refresh.refresh_helper.tips.TipsType;
+import com.dinuscxj.refresh.refresh_helper.tips.TipsUtils;
 
 public class DefaultTipsHelper implements TipsHelper {
 
@@ -57,13 +60,6 @@ public class DefaultTipsHelper implements TipsHelper {
             return;
         }
 
-//        maybe you like this mode
-//        mRefreshLayout.post(new Runnable() {
-//          @Override
-//          public void run() {
-//            mRefreshLayout.setRefreshing(true);
-//          }
-//        });
     }
 
     @Override

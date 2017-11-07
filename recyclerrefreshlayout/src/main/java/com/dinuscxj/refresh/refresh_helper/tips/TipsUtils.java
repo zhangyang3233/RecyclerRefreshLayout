@@ -1,10 +1,10 @@
-package com.dinuscxj.example.tips;
+package com.dinuscxj.refresh.refresh_helper.tips;
 
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.dinuscxj.example.R;
+import com.dinuscxj.recyclerrefreshlayout.R;
 
 public class TipsUtils {
 

@@ -18,7 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dinuscxj.example.R;
-import com.dinuscxj.example.adapter.RecyclerListAdapter;
+import com.dinuscxj.refresh.refresh_helper.adapter.RecyclerListAdapter;
 import com.dinuscxj.example.model.OpenProjectFactory;
 import com.dinuscxj.example.model.OpenProjectModel;
 import com.dinuscxj.example.utils.DensityUtil;
