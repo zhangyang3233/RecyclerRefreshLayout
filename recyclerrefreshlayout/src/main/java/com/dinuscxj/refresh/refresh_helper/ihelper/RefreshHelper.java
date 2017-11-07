@@ -115,6 +115,28 @@ public class RefreshHelper {
         }
     }
 
+    public void requestFailure() {
+        requestComplete();
+        mTipsHelper.showError(isFirstPage(), new Exception("net error"));
+    }
+
+    protected void requestComplete(){
+        mIsLoading = false;
+        if (mRecyclerRefreshLayout != null) {
+            mRecyclerRefreshLayout.setRefreshing(false);
+        }
+        mTipsHelper.hideError();
+        mTipsHelper.hideEmpty();
+        mTipsHelper.hideLoading();
+        if (mOriginAdapter.isEmpty()) {
+            mTipsHelper.showEmpty();
+        } else if (mIRefresher.hasMore()) {
+            mTipsHelper.showHasMore();
+        } else {
+            mTipsHelper.hideHasMore();
+        }
+    }
+
 
     public class AutoLoadEventDetector extends RecyclerView.OnScrollListener {
 
@@ -127,7 +149,7 @@ public class RefreshHelper {
                         .getChildAt(manager.getChildCount() - 1).getLayoutParams()).getViewAdapterPosition();
 
                 if (last == count - 1 && !mIsLoading) {
-                    mIRefresher.onLoadMore(mPage);
+                    requestMore();
                 }
             }
         }
