@@ -65,6 +65,9 @@ public class RefreshHelper {
         } else {
             mRecyclerRefreshLayout.setEnabled(false);
         }
+
+        //init TipsHelper
+        mTipsHelper = mIRefresher.createTipsHelper();
     }
 
     public void onDestory(){
