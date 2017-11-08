@@ -197,7 +197,8 @@ public class RefreshHelper {
 
     View getLoadingMoreView() {
         if (mLoadingMoreView == null) {
-            mLoadingMoreView = mIRefresher.getRefreshConfig().getLoadMoreViewInfo(mParent.getContext()).mLoadMoreViewInfo;
+            mLoadingMoreView = mIRefresher.getRefreshConfig().getLoadMoreViewInfo(mParent.getContext())
+                    .mLoadMoreViewInfo;
         }
         return mLoadingMoreView;
     }

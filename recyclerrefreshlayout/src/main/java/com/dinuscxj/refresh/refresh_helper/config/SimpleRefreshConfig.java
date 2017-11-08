@@ -91,11 +91,11 @@ public class SimpleRefreshConfig extends BaseRefreshConfig {
         mLoadingView.setImageResource(R.drawable.spinner);
         mLoadingView.setPadding(0, (int) DensityUtil.dip2px(context, 10),
                 0, (int) DensityUtil.dip2px(context, 10));
-        RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(RecyclerRefreshLayout.LayoutParams.MATCH_PARENT,
+        RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(RecyclerRefreshLayout.LayoutParams
+                .MATCH_PARENT,
                 (int) DensityUtil.dip2px(context, 40));
         return new LoadMoreViewInfo(mLoadingView, params);
     }
-
 
 
     public SimpleRefreshConfig setStyle(RecyclerRefreshLayout.RefreshStyle style) {
