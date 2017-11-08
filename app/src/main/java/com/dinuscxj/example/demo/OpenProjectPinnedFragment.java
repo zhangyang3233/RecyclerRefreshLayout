@@ -1,5 +1,6 @@
 package com.dinuscxj.example.demo;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,30 +9,34 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dinuscxj.example.R;
-import com.dinuscxj.example.tips.DefaultTipsHelper;
-import com.dinuscxj.refresh.refresh_helper.adapter.RecyclerListAdapter;
 import com.dinuscxj.example.model.OpenProjectFactory;
 import com.dinuscxj.example.model.OpenProjectModel;
-import com.dinuscxj.example.utils.DensityUtil;
+import com.dinuscxj.example.tips.DefaultTipsHelper;
 import com.dinuscxj.refresh.RecyclerRefreshLayout;
+import com.dinuscxj.refresh.refresh_helper.adapter.RecyclerListAdapter;
+import com.dinuscxj.refresh.refresh_helper.config.BaseRefreshConfig;
+import com.dinuscxj.refresh.refresh_helper.config.SimpleRefreshConfig;
 import com.dinuscxj.refresh.refresh_helper.ihelper.IRefresher;
 import com.dinuscxj.refresh.refresh_helper.tips.TipsHelper;
+import com.dinuscxj.refresh.refresh_helper.util.DensityUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class OpenProjectPinnedFragment extends RecyclerFragment implements IRefresher{
+public class OpenProjectPinnedFragment extends RecyclerFragment implements IRefresher {
     private static final int SIMULATE_UNSPECIFIED = 0;
     private static final int SIMULATE_FRESH_FIRST = 1;
     private static final int SIMULATE_FRESH_NO_DATA = 2;
@@ -76,10 +81,7 @@ public class OpenProjectPinnedFragment extends RecyclerFragment implements IRefr
         }
 
         mItemList.clear();
-        getHeaderAdapter().notifyDataSetChanged();
-
-        getHeaderAdapter().removeAllFooterView();
-
+        getAdapter().notifyDataSetChanged();
         refresh();
 
         return super.onOptionsItemSelected(item);
@@ -88,10 +90,20 @@ public class OpenProjectPinnedFragment extends RecyclerFragment implements IRefr
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getOriginAdapter().setItemList(mItemList);
-        getHeaderAdapter().notifyDataSetChanged();
-        getRecyclerRefreshLayout().setRefreshStyle(RecyclerRefreshLayout.RefreshStyle.PINNED);
-        getRecyclerRefreshLayout().setRefreshInitialOffset(DensityUtil.dip2px(getActivity(), 15));
+        getAdapter().setItemList(mItemList);
+        getAdapter().notifyDataSetChanged();
+    }
+
+    @Override
+    public BaseRefreshConfig getRefreshConfig() {
+        return SimpleRefreshConfig.newInstance(RecyclerRefreshLayout.RefreshStyle.PINNED).setRefreshInitialOffset(DensityUtil.dip2px(getActivity(), 15)).setIDragDistanceConverter(new ResistanceDragDistanceConvert(getScreenHeight(getActivity())));
+    }
+
+    private static int getScreenHeight(Context context) {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(displayMetrics);
+        return displayMetrics.heightPixels;
     }
 
     @Override
@@ -126,7 +138,7 @@ public class OpenProjectPinnedFragment extends RecyclerFragment implements IRefr
             public void onSuccess(List<OpenProjectModel> openProjectModels) {
                 mItemList.clear();
                 mItemList.addAll(openProjectModels);
-                getHeaderAdapter().notifyDataSetChanged();
+                getAdapter().notifyDataSetChanged();
                 mRefreshHelper.requestComplete();
             }
 
@@ -143,7 +155,7 @@ public class OpenProjectPinnedFragment extends RecyclerFragment implements IRefr
             @Override
             public void onSuccess(List<OpenProjectModel> openProjectModels) {
                 mItemList.addAll(openProjectModels);
-                getHeaderAdapter().notifyDataSetChanged();
+                getAdapter().notifyDataSetChanged();
                 mRefreshHelper.requestComplete();
             }
 
@@ -156,7 +168,7 @@ public class OpenProjectPinnedFragment extends RecyclerFragment implements IRefr
 
     @Override
     public boolean hasMore() {
-        return false;
+        return true;
     }
 
     @NonNull
@@ -212,7 +224,6 @@ public class OpenProjectPinnedFragment extends RecyclerFragment implements IRefr
     }
 
 
-
     private class ItemViewHolder extends RecyclerListAdapter.ViewHolder<OpenProjectModel> {
         private final TextView mTvTitle;
         private final TextView mTvContent;
@@ -238,4 +249,5 @@ public class OpenProjectPinnedFragment extends RecyclerFragment implements IRefr
             mLlContentPanel.setBackgroundColor(Color.parseColor(item.getColor()));
         }
     }
+
 }

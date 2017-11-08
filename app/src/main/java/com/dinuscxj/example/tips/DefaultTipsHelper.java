@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import com.dinuscxj.example.R;
 import com.dinuscxj.example.demo.RecyclerFragment;
-import com.dinuscxj.example.utils.DensityUtil;
 import com.dinuscxj.refresh.RecyclerRefreshLayout;
 import com.dinuscxj.refresh.refresh_helper.tips.TipsHelper;
 import com.dinuscxj.refresh.refresh_helper.tips.TipsType;
@@ -21,21 +20,11 @@ public class DefaultTipsHelper implements TipsHelper {
     protected final RecyclerFragment mFragment;
     protected final RecyclerView mRecyclerView;
     protected final RecyclerRefreshLayout mRefreshLayout;
-    protected final ImageView mLoadingView;
 
     public DefaultTipsHelper(RecyclerFragment fragment) {
         mFragment = fragment;
         mRecyclerView = fragment.getRecyclerView();
         mRefreshLayout = fragment.getRecyclerRefreshLayout();
-
-        mLoadingView = new ImageView(fragment.getActivity());
-        mLoadingView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        mLoadingView.setImageResource(R.drawable.spinner);
-        mLoadingView.setPadding(0, (int) DensityUtil.dip2px(mFragment.getActivity(), 10),
-                0, (int) DensityUtil.dip2px(mFragment.getActivity(), 10));
-        mLoadingView.setLayoutParams(new RecyclerView.LayoutParams(
-                RecyclerRefreshLayout.LayoutParams.MATCH_PARENT,
-                (int) DensityUtil.dip2px(fragment.getActivity(), 40)));
     }
 
     @Override
@@ -84,7 +73,7 @@ public class DefaultTipsHelper implements TipsHelper {
             return;
         }
 
-        Toast.makeText(mLoadingView.getContext(), errorMessage, Toast.LENGTH_LONG).show();
+        Toast.makeText(mRecyclerView.getContext(), errorMessage, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -92,16 +81,5 @@ public class DefaultTipsHelper implements TipsHelper {
         TipsUtils.hideTips(mRecyclerView, TipsType.LOADING_FAILED);
     }
 
-    @Override
-    public void showHasMore() {
-        if (!mFragment.getHeaderAdapter().containsFooterView(mLoadingView)) {
-            ((AnimationDrawable) mLoadingView.getDrawable()).start();
-            mFragment.getHeaderAdapter().addFooterView(mLoadingView);
-        }
-    }
 
-    @Override
-    public void hideHasMore() {
-        mFragment.getHeaderAdapter().removeFooterView(mLoadingView);
-    }
 }

@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 
 import com.dinuscxj.example.R;
 import com.dinuscxj.refresh.RecyclerRefreshLayout;
-import com.dinuscxj.refresh.refresh_helper.adapter.HeaderViewRecyclerAdapter;
 import com.dinuscxj.refresh.refresh_helper.adapter.RecyclerListAdapter;
 import com.dinuscxj.refresh.refresh_helper.ihelper.IRefresher;
 import com.dinuscxj.refresh.refresh_helper.ihelper.RefreshHelper;
@@ -29,7 +28,6 @@ public abstract class RecyclerFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mRefreshHelper = new RefreshHelper(createRefresher(), view);
-        mRefreshHelper.init();
         mRefreshHelper.refresh();
     }
 
@@ -45,11 +43,11 @@ public abstract class RecyclerFragment extends Fragment {
         super.onDestroyView();
     }
 
-    public HeaderViewRecyclerAdapter getHeaderAdapter() {
-        return mRefreshHelper.getHeaderAdapter();
-    }
+//    public HeaderViewRecyclerAdapter getHeaderAdapter() {
+//        return mRefreshHelper.getHeaderAdapter();
+//    }
 
-    public RecyclerListAdapter getOriginAdapter() {
+    public RecyclerListAdapter getAdapter() {
         return mRefreshHelper.getOriginAdapter();
     }
 
@@ -60,6 +58,5 @@ public abstract class RecyclerFragment extends Fragment {
     public RecyclerView getRecyclerView() {
         return mRefreshHelper.getRecyclerView();
     }
-
 
 }

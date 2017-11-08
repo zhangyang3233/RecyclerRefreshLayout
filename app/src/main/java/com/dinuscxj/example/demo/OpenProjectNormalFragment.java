@@ -25,7 +25,10 @@ import com.dinuscxj.example.R;
 import com.dinuscxj.example.model.OpenProjectFactory;
 import com.dinuscxj.example.model.OpenProjectModel;
 import com.dinuscxj.example.tips.DefaultTipsHelper;
+import com.dinuscxj.refresh.RecyclerRefreshLayout;
 import com.dinuscxj.refresh.refresh_helper.adapter.RecyclerListAdapter;
+import com.dinuscxj.refresh.refresh_helper.config.BaseRefreshConfig;
+import com.dinuscxj.refresh.refresh_helper.config.SimpleRefreshConfig;
 import com.dinuscxj.refresh.refresh_helper.ihelper.IRefresher;
 import com.dinuscxj.refresh.refresh_helper.tips.TipsHelper;
 
@@ -78,10 +81,7 @@ public class OpenProjectNormalFragment extends RecyclerFragment implements IRefr
         }
 
         mItemList.clear();
-        getHeaderAdapter().notifyDataSetChanged();
-
-        getHeaderAdapter().removeAllFooterView();
-
+        getAdapter().notifyDataSetChanged();
         refresh();
 
         return super.onOptionsItemSelected(item);
@@ -90,10 +90,8 @@ public class OpenProjectNormalFragment extends RecyclerFragment implements IRefr
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getOriginAdapter().setItemList(mItemList);
-        getHeaderAdapter().notifyDataSetChanged();
-        getRecyclerRefreshLayout().setDragDistanceConverter(
-                new ResistanceDragDistanceConvert(getScreenHeight(getActivity())));
+        getAdapter().setItemList(mItemList);
+        getAdapter().notifyDataSetChanged();
     }
 
     @Override
@@ -150,7 +148,7 @@ public class OpenProjectNormalFragment extends RecyclerFragment implements IRefr
             public void onSuccess(List<OpenProjectModel> openProjectModels) {
                 mItemList.clear();
                 mItemList.addAll(openProjectModels);
-                getHeaderAdapter().notifyDataSetChanged();
+                getAdapter().notifyDataSetChanged();
                 mRefreshHelper.requestComplete();
             }
 
@@ -167,7 +165,7 @@ public class OpenProjectNormalFragment extends RecyclerFragment implements IRefr
             @Override
             public void onSuccess(List<OpenProjectModel> openProjectModels) {
                 mItemList.addAll(openProjectModels);
-                getHeaderAdapter().notifyDataSetChanged();
+                getAdapter().notifyDataSetChanged();
                 mRefreshHelper.requestComplete();
             }
 
@@ -206,6 +204,11 @@ public class OpenProjectNormalFragment extends RecyclerFragment implements IRefr
     @Override
     public boolean allowPullToRefresh() {
         return true;
+    }
+
+    @Override
+    public BaseRefreshConfig getRefreshConfig() {
+        return SimpleRefreshConfig.newInstance(RecyclerRefreshLayout.RefreshStyle.NORMAL).setIDragDistanceConverter(new ResistanceDragDistanceConvert(getScreenHeight(getActivity())));
     }
 
     private interface RequestListener {

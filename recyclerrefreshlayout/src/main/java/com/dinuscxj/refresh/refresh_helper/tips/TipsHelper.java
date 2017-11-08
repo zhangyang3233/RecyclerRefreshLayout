@@ -15,7 +15,4 @@ public interface TipsHelper {
 
     void hideError();
 
-    void showHasMore();
-
-    void hideHasMore();
 }

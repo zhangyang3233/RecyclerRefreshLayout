@@ -1,12 +1,16 @@
 package com.dinuscxj.refresh.refresh_helper.ihelper;
 
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.dinuscxj.recyclerrefreshlayout.R;
 import com.dinuscxj.refresh.RecyclerRefreshLayout;
 import com.dinuscxj.refresh.refresh_helper.adapter.HeaderViewRecyclerAdapter;
 import com.dinuscxj.refresh.refresh_helper.adapter.RecyclerListAdapter;
+import com.dinuscxj.refresh.refresh_helper.config.BaseRefreshConfig;
 import com.dinuscxj.refresh.refresh_helper.tips.TipsHelper;
 
 /**
@@ -28,12 +32,13 @@ public class RefreshHelper {
 
     private RefreshEventDetector mRefreshEventDetector;
     private final AutoLoadEventDetector mAutoLoadEventDetector;
+    private View mLoadingMoreView;
 
 
     public RefreshHelper(IRefresher refresher, View parent) {
         mIRefresher = refresher;
         mParent = parent;
-        mRefreshEventDetector = new RefreshEventDetector(mIRefresher);
+        mRefreshEventDetector = new RefreshEventDetector();
         mAutoLoadEventDetector = new AutoLoadEventDetector();
         init();
     }
@@ -53,6 +58,7 @@ public class RefreshHelper {
 
         // init RecyclerRefreshLayout
         mRecyclerRefreshLayout = (RecyclerRefreshLayout) mParent.findViewById(R.id.refresh_layout);
+        BaseRefreshConfig.set(mRecyclerRefreshLayout, mIRefresher.getRefreshConfig());
         if (mRecyclerRefreshLayout == null) {
             return;
         }
@@ -63,21 +69,20 @@ public class RefreshHelper {
         } else {
             mRecyclerRefreshLayout.setEnabled(false);
         }
-
     }
 
     private void initTipsHelper() {
         mTipsHelper = mIRefresher.createTipsHelper();
     }
 
-    private TipsHelper getTipsHelper(){
-        if(mTipsHelper == null){
+    private TipsHelper getTipsHelper() {
+        if (mTipsHelper == null) {
             initTipsHelper();
         }
         return mTipsHelper;
     }
 
-    public void onDestory(){
+    public void onDestory() {
         mRecyclerView.removeOnScrollListener(mAutoLoadEventDetector);
     }
 
@@ -130,7 +135,7 @@ public class RefreshHelper {
         getTipsHelper().showError(isFirstPage(), new Exception("net error"));
     }
 
-    public void requestComplete(){
+    public void requestComplete() {
         mIsLoading = false;
         if (mRecyclerRefreshLayout != null) {
             mRecyclerRefreshLayout.setRefreshing(false);
@@ -141,9 +146,9 @@ public class RefreshHelper {
         if (mOriginAdapter.isEmpty()) {
             getTipsHelper().showEmpty();
         } else if (mIRefresher.hasMore()) {
-            getTipsHelper().showHasMore();
+            showHasMore();
         } else {
-            getTipsHelper().hideHasMore();
+            hideHasMore();
         }
     }
 
@@ -166,15 +171,35 @@ public class RefreshHelper {
     }
 
     public class RefreshEventDetector implements RecyclerRefreshLayout.OnRefreshListener {
-        IRefresher refresher;
-
-        public RefreshEventDetector(IRefresher refresher) {
-            this.refresher = refresher;
-        }
 
         @Override
         public void onRefresh() {
-            refresher.onRefresh();
+            mIRefresher.onRefresh();
         }
     }
+
+    void showHasMore() {
+        if (!getHeaderAdapter().containsFooterView(getLoadingMoreView())) {
+            if (mLoadingMoreView instanceof ImageView) {
+                Drawable drawable = ((ImageView) mLoadingMoreView).getDrawable();
+                if (drawable instanceof AnimationDrawable) {
+                    ((AnimationDrawable) drawable).start();
+                }
+            }
+            getHeaderAdapter().addFooterView(mLoadingMoreView);
+        }
+    }
+
+    void hideHasMore() {
+        getHeaderAdapter().removeFooterView(mLoadingMoreView);
+    }
+
+
+    View getLoadingMoreView() {
+        if (mLoadingMoreView == null) {
+            mLoadingMoreView = mIRefresher.getRefreshConfig().getLoadMoreViewInfo(mParent.getContext()).mLoadMoreViewInfo;
+        }
+        return mLoadingMoreView;
+    }
+
 }

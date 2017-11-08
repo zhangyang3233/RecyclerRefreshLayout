@@ -21,11 +21,13 @@ import com.dinuscxj.example.R;
 import com.dinuscxj.example.model.OpenProjectFactory;
 import com.dinuscxj.example.model.OpenProjectModel;
 import com.dinuscxj.example.tips.DefaultTipsHelper;
-import com.dinuscxj.example.utils.DensityUtil;
 import com.dinuscxj.refresh.RecyclerRefreshLayout;
 import com.dinuscxj.refresh.refresh_helper.adapter.RecyclerListAdapter;
+import com.dinuscxj.refresh.refresh_helper.config.BaseRefreshConfig;
+import com.dinuscxj.refresh.refresh_helper.config.SimpleRefreshConfig;
 import com.dinuscxj.refresh.refresh_helper.ihelper.IRefresher;
 import com.dinuscxj.refresh.refresh_helper.tips.TipsHelper;
+import com.dinuscxj.refresh.refresh_helper.util.DensityUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -76,9 +78,7 @@ public class OpenProjectFloatFragment extends RecyclerFragment implements IRefre
         }
 
         mItemList.clear();
-        getHeaderAdapter().notifyDataSetChanged();
-        getHeaderAdapter().removeAllFooterView();
-
+        getAdapter().notifyDataSetChanged();
         refresh();
 
         return super.onOptionsItemSelected(item);
@@ -87,14 +87,15 @@ public class OpenProjectFloatFragment extends RecyclerFragment implements IRefre
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getOriginAdapter().setItemList(mItemList);
-        getHeaderAdapter().notifyDataSetChanged();
+        getAdapter().setItemList(mItemList);
+        getAdapter().notifyDataSetChanged();
+    }
 
-        getRecyclerRefreshLayout().setRefreshStyle(RecyclerRefreshLayout.RefreshStyle.FLOAT);
-
+    @Override
+    public BaseRefreshConfig getRefreshConfig() {
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(
                 (int) DensityUtil.dip2px(getActivity(), 40), (int) DensityUtil.dip2px(getActivity(), 40));
-        getRecyclerRefreshLayout().setRefreshView(new MaterialRefreshView(getActivity()), layoutParams);
+        return SimpleRefreshConfig.newInstance(RecyclerRefreshLayout.RefreshStyle.FLOAT).setRefreshViewInfo(new BaseRefreshConfig.RefreshViewInfo(new MaterialRefreshView(getActivity()), layoutParams));
     }
 
     @Override
@@ -144,7 +145,7 @@ public class OpenProjectFloatFragment extends RecyclerFragment implements IRefre
             public void onSuccess(List<OpenProjectModel> openProjectModels) {
                 mItemList.clear();
                 mItemList.addAll(openProjectModels);
-                getHeaderAdapter().notifyDataSetChanged();
+                getAdapter().notifyDataSetChanged();
                 mRefreshHelper.requestComplete();
             }
 
@@ -161,7 +162,7 @@ public class OpenProjectFloatFragment extends RecyclerFragment implements IRefre
             @Override
             public void onSuccess(List<OpenProjectModel> openProjectModels) {
                 mItemList.addAll(openProjectModels);
-                getHeaderAdapter().notifyDataSetChanged();
+                getAdapter().notifyDataSetChanged();
                 mRefreshHelper.requestComplete();
             }
 
@@ -234,4 +235,6 @@ public class OpenProjectFloatFragment extends RecyclerFragment implements IRefre
             mLlContentPanel.setBackgroundColor(Color.parseColor(item.getColor()));
         }
     }
+
+
 }
