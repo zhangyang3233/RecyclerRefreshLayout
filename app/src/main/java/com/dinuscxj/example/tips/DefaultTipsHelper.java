@@ -11,9 +11,10 @@ import android.widget.Toast;
 import com.dinuscxj.example.R;
 import com.dinuscxj.example.demo.RecyclerFragment;
 import com.dinuscxj.refresh.RecyclerRefreshLayout;
-import com.dinuscxj.refresh.refresh_helper.tips.TipsHelper;
-import com.dinuscxj.refresh.refresh_helper.tips.TipsType;
-import com.dinuscxj.refresh.refresh_helper.tips.TipsUtils;
+import com.ppd.refreshhelper.tips.TipsHelper;
+import com.ppd.refreshhelper.tips.TipsType;
+import com.ppd.refreshhelper.tips.TipsUtils;
+
 
 public class DefaultTipsHelper implements TipsHelper {
 

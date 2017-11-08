@@ -10,9 +10,10 @@ import android.view.ViewGroup;
 
 import com.dinuscxj.example.R;
 import com.dinuscxj.refresh.RecyclerRefreshLayout;
-import com.dinuscxj.refresh.refresh_helper.adapter.RecyclerListAdapter;
-import com.dinuscxj.refresh.refresh_helper.ihelper.IRefresher;
-import com.dinuscxj.refresh.refresh_helper.ihelper.RefreshHelper;
+import com.ppd.refreshhelper.adapter.RecyclerListAdapter;
+import com.ppd.refreshhelper.ihelper.IRefresher;
+import com.ppd.refreshhelper.ihelper.RefreshHelper;
+
 
 public abstract class RecyclerFragment extends Fragment {
 

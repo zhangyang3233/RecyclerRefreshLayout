@@ -26,15 +26,16 @@ import com.dinuscxj.example.model.OpenProjectFactory;
 import com.dinuscxj.example.model.OpenProjectModel;
 import com.dinuscxj.example.tips.DefaultTipsHelper;
 import com.dinuscxj.refresh.RecyclerRefreshLayout;
-import com.dinuscxj.refresh.refresh_helper.adapter.RecyclerListAdapter;
-import com.dinuscxj.refresh.refresh_helper.config.BaseRefreshConfig;
-import com.dinuscxj.refresh.refresh_helper.config.SimpleRefreshConfig;
-import com.dinuscxj.refresh.refresh_helper.ihelper.IRefresher;
-import com.dinuscxj.refresh.refresh_helper.tips.TipsHelper;
+import com.ppd.refreshhelper.adapter.RecyclerListAdapter;
+import com.ppd.refreshhelper.config.BaseRefreshConfig;
+import com.ppd.refreshhelper.config.SimpleRefreshConfig;
+import com.ppd.refreshhelper.ihelper.IRefresher;
+import com.ppd.refreshhelper.tips.TipsHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 
 public class OpenProjectNormalFragment extends RecyclerFragment implements IRefresher {
     private static final int SIMULATE_UNSPECIFIED = 0;
