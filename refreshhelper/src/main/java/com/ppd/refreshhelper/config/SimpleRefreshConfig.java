@@ -3,11 +3,9 @@ package com.ppd.refreshhelper.config;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.animation.Interpolator;
-import android.widget.ImageView;
 
 import com.dinuscxj.refresh.IDragDistanceConverter;
 import com.dinuscxj.refresh.RecyclerRefreshLayout;
-import com.ppd.refreshhelper.R;
 import com.ppd.refreshhelper.util.DensityUtil;
 
 
@@ -87,15 +85,10 @@ public class SimpleRefreshConfig extends BaseRefreshConfig {
 
     @Override
     public LoadMoreViewInfo getLoadMoreViewInfo(Context context) {
-        ImageView mLoadingView = new ImageView(context);
-        mLoadingView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        mLoadingView.setImageResource(R.drawable.spinner);
-        mLoadingView.setPadding(0, (int) DensityUtil.dip2px(context, 10),
-                0, (int) DensityUtil.dip2px(context, 10));
         RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(RecyclerRefreshLayout.LayoutParams
                 .MATCH_PARENT,
                 (int) DensityUtil.dip2px(context, 40));
-        return new LoadMoreViewInfo(mLoadingView, params);
+        return new LoadMoreViewInfo(LoadMoreView.newInstance(context), params);
     }
 
 

@@ -8,6 +8,7 @@ import android.view.animation.Interpolator;
 
 import com.dinuscxj.refresh.IDragDistanceConverter;
 import com.dinuscxj.refresh.RecyclerRefreshLayout;
+import com.ppd.refreshhelper.ihelper.ILoadMoreStatus;
 
 /**
  * Created by zhangyang131 on 2017/11/7.
@@ -131,11 +132,14 @@ public abstract class BaseRefreshConfig {
     public abstract LoadMoreViewInfo getLoadMoreViewInfo(Context context);
 
     public static class LoadMoreViewInfo {
-        public View mLoadMoreViewInfo;
+        public View mLoadMoreView;
 
-        public LoadMoreViewInfo(View loadMoreViewInfo, RecyclerView.LayoutParams mLayoutParams) {
-            this.mLoadMoreViewInfo = loadMoreViewInfo;
-            this.mLoadMoreViewInfo.setLayoutParams(mLayoutParams);
+        public LoadMoreViewInfo(View loadMoreView, RecyclerView.LayoutParams mLayoutParams) {
+            if(!(loadMoreView instanceof ILoadMoreStatus)){
+                throw new IllegalArgumentException("loadMoreView must be implements ILoadMoreStatus");
+            }
+            this.mLoadMoreView = loadMoreView;
+            this.mLoadMoreView.setLayoutParams(mLayoutParams);
         }
     }
 

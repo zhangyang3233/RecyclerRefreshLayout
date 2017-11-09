@@ -3,7 +3,6 @@ package com.ppd.refreshhelper.ihelper;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 
-import com.ppd.refreshhelper.adapter.RecyclerListAdapter;
 import com.ppd.refreshhelper.config.BaseRefreshConfig;
 import com.ppd.refreshhelper.tips.TipsHelper;
 
@@ -22,7 +21,7 @@ public interface IRefresher {
     boolean hasMore();
 
     @NonNull
-    RecyclerListAdapter createAdapter();
+    RecyclerView.Adapter createAdapter();
 
     @NonNull
     RecyclerView.LayoutManager onCreateLayoutManager();

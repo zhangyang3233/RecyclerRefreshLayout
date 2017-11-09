@@ -3,12 +3,12 @@ package com.ppd.refreshhelper.ihelper;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.dinuscxj.refresh.RecyclerRefreshLayout;
 import com.ppd.refreshhelper.R;
-import com.ppd.refreshhelper.adapter.RecyclerListAdapter;
 import com.ppd.refreshhelper.config.BaseRefreshConfig;
 import com.ppd.refreshhelper.tips.TipsHelper;
 import com.ppd.refreshhelper.wrap.PPDRecyclerView;
@@ -17,16 +17,17 @@ import com.ppd.refreshhelper.wrap.PPDRecyclerView;
  * Created by zhangyang131 on 2017/11/7.
  */
 public class RefreshHelper {
+    public static final int INIT_PAGE_START = 1;
     IRefresher mIRefresher;
     View mParent;
 
-    int mPage;
+    int mPage = INIT_PAGE_START;
     private boolean mIsLoading;
     private PPDRecyclerView mRecyclerView;
     private RecyclerRefreshLayout mRecyclerRefreshLayout;
 
     private TipsHelper mTipsHelper;
-    private RecyclerListAdapter mAdapter;
+    private RecyclerView.Adapter mAdapter;
 
     private RefreshEventDetector mRefreshEventDetector;
     private final AutoLoadEventDetector mAutoLoadEventDetector;
@@ -78,11 +79,11 @@ public class RefreshHelper {
         return mTipsHelper;
     }
 
-    public void onDestory() {
+    public void onDestroy() {
         mRecyclerView.removeOnScrollListener(mAutoLoadEventDetector);
     }
 
-    public RecyclerListAdapter getAdapter() {
+    public RecyclerView.Adapter getAdapter() {
         return mAdapter;
     }
 
@@ -94,13 +95,13 @@ public class RefreshHelper {
         return mRecyclerView;
     }
 
-    public void refresh() {
+    public void requestRefresh() {
         if (isFirstPage()) {
             getTipsHelper().showLoading(true);
         } else {
             mRecyclerRefreshLayout.setRefreshing(true);
         }
-        requestRefresh();
+        onRefresh();
     }
 
 
@@ -108,26 +109,32 @@ public class RefreshHelper {
         return mAdapter.getItemCount() <= 0;
     }
 
-    private void requestRefresh() {
+    private void onRefresh() {
         if (!mIsLoading) {
             mIsLoading = true;
+            mPage = INIT_PAGE_START;
             mIRefresher.onRefresh();
         }
     }
 
-    private void requestMore() {
+    private void onLoadMore() {
         if (mIRefresher.hasMore() && !mIsLoading) {
             mIsLoading = true;
+            ((ILoadMoreStatus) mLoadingMoreView).onNormal();
             mIRefresher.onLoadMore(mPage);
         }
     }
 
     public void requestFailure() {
-        requestComplete();
-        getTipsHelper().showError(isFirstPage(), new Exception("net error"));
+        refreshStop();
+        if (mPage == INIT_PAGE_START) {
+            getTipsHelper().showError(isFirstPage(), new Exception("net error"));
+        } else {
+            ((ILoadMoreStatus) mLoadingMoreView).onError();
+        }
     }
 
-    public void requestComplete() {
+    private void refreshStop(){
         mIsLoading = false;
         if (mRecyclerRefreshLayout != null) {
             mRecyclerRefreshLayout.setRefreshing(false);
@@ -135,13 +142,21 @@ public class RefreshHelper {
         getTipsHelper().hideError();
         getTipsHelper().hideEmpty();
         getTipsHelper().hideLoading();
-        if (mAdapter.isEmpty()) {
+        if (mAdapter.getItemCount() == 0) {
             getTipsHelper().showEmpty();
         } else if (mIRefresher.hasMore()) {
             showHasMore();
         } else {
             hideHasMore();
         }
+    }
+
+    public void requestComplete() {
+        mPage++;
+        if(mLoadingMoreView != null){
+            ((ILoadMoreStatus) mLoadingMoreView).onNormal();
+        }
+        refreshStop();
     }
 
 
@@ -153,10 +168,12 @@ public class RefreshHelper {
             if (manager.getChildCount() > 0) {
                 int count = manager.getItemCount();
                 int last = ((RecyclerView.LayoutParams) manager
-                        .getChildAt(manager.getChildCount() - 1).getLayoutParams()).getViewAdapterPosition();
+                        .getChildAt(manager.getChildCount() - 1).getLayoutParams())
+                        .getViewAdapterPosition();
 
                 if (last == count - 1 && !mIsLoading) {
-                    requestMore();
+                    Log.e("onLoadMore", "onLoadMore");
+                    onLoadMore();
                 }
             }
         }
@@ -166,6 +183,7 @@ public class RefreshHelper {
 
         @Override
         public void onRefresh() {
+            mIsLoading = true;
             mIRefresher.onRefresh();
         }
     }
@@ -189,8 +207,15 @@ public class RefreshHelper {
 
     View getLoadingMoreView() {
         if (mLoadingMoreView == null) {
-            mLoadingMoreView = mIRefresher.getRefreshConfig().getLoadMoreViewInfo(mParent.getContext())
-                    .mLoadMoreViewInfo;
+            mLoadingMoreView = mIRefresher.getRefreshConfig().getLoadMoreViewInfo(mParent
+                    .getContext())
+                    .mLoadMoreView;
+            ((ILoadMoreStatus) mLoadingMoreView).setOnFailedOnclick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onLoadMore();
+                }
+            });
         }
         return mLoadingMoreView;
     }

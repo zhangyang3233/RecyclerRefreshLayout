@@ -2,46 +2,20 @@ package com.ppd.refreshhelper.tips;
 
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
-import com.ppd.refreshhelper.R;
 
 
 public class TipsUtils {
-
-    public static View showLoadingFailedTips(View targetView, Throwable th,
-                                             View.OnClickListener retryListener) {
-
-        return showLoadingFailedTips(targetView, th.getMessage(), retryListener);
-    }
-
-    public static View showLoadingFailedTips(View targetView, CharSequence errorTips,
-                                             View.OnClickListener retryListener) {
-        View tipsView = TipsUtils.showTips(targetView, TipsType.LOADING_FAILED);
-        View retryBtn = tipsView.findViewById(R.id.retry_btn);
-        if (retryListener != null) {
-            retryBtn.setVisibility(View.VISIBLE);
-            retryBtn.setOnClickListener(retryListener);
-        } else {
-            retryBtn.setVisibility(View.GONE);
-        }
-        if (errorTips != null) {
-            ((TextView) tipsView.findViewById(R.id.description)).setText(errorTips);
-        }
-
-        return tipsView;
-    }
 
     /**
      * Show tips view to the target view.
      *
      * @param targetView the target to show the tips view.
-     * @param tipsType   {@link TipsType}
+     * @param tipsType   {@link PPDTipsType}
      * @return the tips view.
      */
-    public static View showTips(View targetView, TipsType tipsType) {
+    public static View showTips(View targetView, PPDTipsType tipsType) {
         Tips tips = tipsType.createTips(targetView.getContext());
-        return tips.applyTo(targetView, tipsType.ordinal());
+        return tips.applyTo(targetView, tipsType.getLayoutRes());
     }
 
     /**
@@ -49,14 +23,14 @@ public class TipsUtils {
      * eg: {@code hideTips(target, TipsType.LOADING, TipsType.FAILED)}.
      *
      * @param targetView the target to show the tips view.
-     * @param tipsTypes  the tips type you want to hid, {@link TipsType}.
+     * @param tipsTypes  the tips type you want to hid, {@link PPDTipsType}.
      */
-    public static void hideTips(View targetView, TipsType... tipsTypes) {
+    public static void hideTips(View targetView, PPDTipsType... tipsTypes) {
         if (targetView == null || tipsTypes == null || tipsTypes.length == 0) {
             return;
         }
-        for (TipsType tipsType : tipsTypes) {
-            hideTips(targetView, tipsType.ordinal());
+        for (PPDTipsType tipsType : tipsTypes) {
+            hideTips(targetView, tipsType.getLayoutRes());
         }
     }
 
