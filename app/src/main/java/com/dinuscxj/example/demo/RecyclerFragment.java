@@ -49,7 +49,7 @@ public abstract class RecyclerFragment extends Fragment {
 //    }
 
     public RecyclerListAdapter getAdapter() {
-        return mRefreshHelper.getOriginAdapter();
+        return mRefreshHelper.getAdapter();
     }
 
     public RecyclerRefreshLayout getRecyclerRefreshLayout() {

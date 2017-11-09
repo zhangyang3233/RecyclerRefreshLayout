@@ -8,27 +8,25 @@ import android.widget.ImageView;
 
 import com.dinuscxj.refresh.RecyclerRefreshLayout;
 import com.ppd.refreshhelper.R;
-import com.ppd.refreshhelper.adapter.HeaderViewRecyclerAdapter;
 import com.ppd.refreshhelper.adapter.RecyclerListAdapter;
 import com.ppd.refreshhelper.config.BaseRefreshConfig;
 import com.ppd.refreshhelper.tips.TipsHelper;
+import com.ppd.refreshhelper.wrap.PPDRecyclerView;
 
 /**
  * Created by zhangyang131 on 2017/11/7.
  */
-
 public class RefreshHelper {
     IRefresher mIRefresher;
     View mParent;
 
     int mPage;
     private boolean mIsLoading;
-    private RecyclerView mRecyclerView;
+    private PPDRecyclerView mRecyclerView;
     private RecyclerRefreshLayout mRecyclerRefreshLayout;
 
     private TipsHelper mTipsHelper;
-    private HeaderViewRecyclerAdapter mHeaderAdapter;
-    private RecyclerListAdapter mOriginAdapter;
+    private RecyclerListAdapter mAdapter;
 
     private RefreshEventDetector mRefreshEventDetector;
     private final AutoLoadEventDetector mAutoLoadEventDetector;
@@ -45,16 +43,14 @@ public class RefreshHelper {
 
     public void init() {
         // init recyclerView and adapter
-        mRecyclerView = (RecyclerView) mParent.findViewById(R.id.recycler_view);
+        mRecyclerView = (PPDRecyclerView) mParent.findViewById(R.id.recycler_view);
         mRecyclerView.addOnScrollListener(mAutoLoadEventDetector);
-        mOriginAdapter = mIRefresher.createAdapter();
-        mHeaderAdapter = new HeaderViewRecyclerAdapter(mOriginAdapter);
+        mAdapter = mIRefresher.createAdapter();
         RecyclerView.LayoutManager layoutManager = mIRefresher.onCreateLayoutManager();
         if (layoutManager != null) {
             mRecyclerView.setLayoutManager(layoutManager);
         }
-        mRecyclerView.setAdapter(mHeaderAdapter);
-        mHeaderAdapter.adjustSpanSize(mRecyclerView);
+        mRecyclerView.setAdapter(mAdapter);
 
         // init RecyclerRefreshLayout
         mRecyclerRefreshLayout = (RecyclerRefreshLayout) mParent.findViewById(R.id.refresh_layout);
@@ -86,12 +82,8 @@ public class RefreshHelper {
         mRecyclerView.removeOnScrollListener(mAutoLoadEventDetector);
     }
 
-    public HeaderViewRecyclerAdapter getHeaderAdapter() {
-        return mHeaderAdapter;
-    }
-
-    public RecyclerListAdapter getOriginAdapter() {
-        return mOriginAdapter;
+    public RecyclerListAdapter getAdapter() {
+        return mAdapter;
     }
 
     public RecyclerRefreshLayout getRecyclerRefreshLayout() {
@@ -113,7 +105,7 @@ public class RefreshHelper {
 
 
     public boolean isFirstPage() {
-        return mOriginAdapter.getItemCount() <= 0;
+        return mAdapter.getItemCount() <= 0;
     }
 
     private void requestRefresh() {
@@ -143,7 +135,7 @@ public class RefreshHelper {
         getTipsHelper().hideError();
         getTipsHelper().hideEmpty();
         getTipsHelper().hideLoading();
-        if (mOriginAdapter.isEmpty()) {
+        if (mAdapter.isEmpty()) {
             getTipsHelper().showEmpty();
         } else if (mIRefresher.hasMore()) {
             showHasMore();
@@ -179,19 +171,19 @@ public class RefreshHelper {
     }
 
     void showHasMore() {
-        if (!getHeaderAdapter().containsFooterView(getLoadingMoreView())) {
+        if (!mRecyclerView.containsFooterView(getLoadingMoreView())) {
             if (mLoadingMoreView instanceof ImageView) {
                 Drawable drawable = ((ImageView) mLoadingMoreView).getDrawable();
                 if (drawable instanceof AnimationDrawable) {
                     ((AnimationDrawable) drawable).start();
                 }
             }
-            getHeaderAdapter().addFooterView(mLoadingMoreView);
+            mRecyclerView.addFooterView(mLoadingMoreView);
         }
     }
 
     void hideHasMore() {
-        getHeaderAdapter().removeFooterView(mLoadingMoreView);
+        mRecyclerView.removeFooterView(mLoadingMoreView);
     }
 
 
