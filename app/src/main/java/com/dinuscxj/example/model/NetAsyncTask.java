@@ -1,9 +1,6 @@
-package com.dinuscxj.example.ppd;
+package com.dinuscxj.example.model;
 
 import android.os.AsyncTask;
-
-import com.dinuscxj.example.model.OpenProjectFactory;
-import com.dinuscxj.example.model.OpenProjectModel;
 
 import java.util.ArrayList;
 

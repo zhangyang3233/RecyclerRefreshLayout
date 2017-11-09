@@ -6,9 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dinuscxj.example.R;
+import com.dinuscxj.example.model.ItemViewHolder;
 import com.dinuscxj.example.model.OpenProjectModel;
 import com.dinuscxj.example.ppd.BaseListActivity;
-import com.dinuscxj.example.ppd.NetAsyncTask;
+import com.dinuscxj.example.model.NetAsyncTask;
 import com.ppd.refreshhelper.adapter.RecyclerListAdapter;
 
 import java.util.ArrayList;

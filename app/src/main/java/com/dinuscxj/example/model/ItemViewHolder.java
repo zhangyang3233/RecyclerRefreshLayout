@@ -1,4 +1,4 @@
-package com.dinuscxj.example.ppdtestdemo;
+package com.dinuscxj.example.model;
 
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -10,7 +10,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dinuscxj.example.R;
-import com.dinuscxj.example.model.OpenProjectModel;
 import com.ppd.refreshhelper.adapter.RecyclerListAdapter;
 
 public  class ItemViewHolder extends RecyclerListAdapter.ViewHolder<OpenProjectModel> {

@@ -1,4 +1,4 @@
-package com.dinuscxj.example.demo;
+package com.dinuscxj.example.ppd;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,7 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dinuscxj.example.R;
-import com.dinuscxj.example.ppd.PPDTipsHelper;
+import com.dinuscxj.example.demo.ResistanceDragDistanceConvert;
+import com.dinuscxj.example.model.MJRefreshView;
 import com.dinuscxj.refresh.RecyclerRefreshLayout;
 import com.ppd.refreshhelper.config.BaseRefreshConfig;
 import com.ppd.refreshhelper.config.SimpleRefreshConfig;
@@ -21,13 +22,14 @@ import com.ppd.refreshhelper.tips.TipsHelper;
 import com.ppd.refreshhelper.util.DensityUtil;
 
 
-public abstract class RecyclerFragment extends Fragment implements IRefresher{
+public abstract class BaseListFragment extends Fragment implements IRefresher {
 
     RefreshHelper mRefreshHelper;
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
+            savedInstanceState) {
         return inflater.inflate(R.layout.base_refresh_recycler_list_layout, container, false);
     }
 
@@ -45,7 +47,6 @@ public abstract class RecyclerFragment extends Fragment implements IRefresher{
         mRefreshHelper.onDestroy();
         super.onDestroyView();
     }
-
 
 
     @Override
@@ -83,9 +84,13 @@ public abstract class RecyclerFragment extends Fragment implements IRefresher{
 
     @Override
     public BaseRefreshConfig getRefreshConfig() {
+        MJRefreshView refreshView = new MJRefreshView(getActivity());
+        BaseRefreshConfig.RefreshViewInfo refreshViewInfo = new BaseRefreshConfig.RefreshViewInfo
+                (refreshView, new ViewGroup.LayoutParams(refreshView.getRefreshTargetOffset(),
+                        refreshView.getRefreshTargetOffset()));
         return SimpleRefreshConfig.newInstance(RecyclerRefreshLayout.RefreshStyle.NORMAL)
                 .setIDragDistanceConverter(new ResistanceDragDistanceConvert(DensityUtil
-                        .getScreenHeight(getActivity())));
+                        .getScreenHeight(getActivity()))).setRefreshViewInfo(refreshViewInfo);
     }
 
     @Override
@@ -94,15 +99,15 @@ public abstract class RecyclerFragment extends Fragment implements IRefresher{
         mRefreshHelper.onDestroy();
     }
 
-    public void requestComplete(){
+    public void requestComplete() {
         mRefreshHelper.requestComplete();
     }
 
-    public void requestFailure(){
+    public void requestFailure() {
         mRefreshHelper.requestFailure();
     }
 
-    protected RecyclerView.Adapter getAdapter(){
+    protected RecyclerView.Adapter getAdapter() {
         return mRefreshHelper.getAdapter();
     }
 

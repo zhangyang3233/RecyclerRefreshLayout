@@ -7,9 +7,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.dinuscxj.example.R;
 import com.dinuscxj.example.demo.ResistanceDragDistanceConvert;
+import com.dinuscxj.example.model.MJRefreshView;
 import com.dinuscxj.refresh.RecyclerRefreshLayout;
 import com.ppd.refreshhelper.config.BaseRefreshConfig;
 import com.ppd.refreshhelper.config.SimpleRefreshConfig;
@@ -80,9 +82,13 @@ public abstract class BaseListActivity extends AppCompatActivity implements IRef
 
     @Override
     public BaseRefreshConfig getRefreshConfig() {
+        MJRefreshView refreshView = new MJRefreshView(this);
+        BaseRefreshConfig.RefreshViewInfo refreshViewInfo = new BaseRefreshConfig.RefreshViewInfo
+                (refreshView, new ViewGroup.LayoutParams(refreshView.getRefreshTargetOffset(),
+                        refreshView.getRefreshTargetOffset()));
         return SimpleRefreshConfig.newInstance(RecyclerRefreshLayout.RefreshStyle.NORMAL)
                 .setIDragDistanceConverter(new ResistanceDragDistanceConvert(DensityUtil
-                        .getScreenHeight(this)));
+                        .getScreenHeight(this))).setRefreshViewInfo(refreshViewInfo);
     }
 
     @Override
