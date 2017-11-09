@@ -37,7 +37,7 @@ public abstract class BaseListActivity extends AppCompatActivity implements IRef
     }
 
     public void requestLoad(){
-        mRefreshHelper.requestRefresh();
+        mRefreshHelper.requestLoad();
     }
 
     protected abstract void onStartLoad();
@@ -93,7 +93,6 @@ public abstract class BaseListActivity extends AppCompatActivity implements IRef
 
     protected RecyclerView.Adapter getAdapter(){
         return mRefreshHelper.getAdapter();
-
     }
 
     public abstract int getLayoutResId();

@@ -1,20 +1,27 @@
 package com.dinuscxj.example.demo;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.dinuscxj.example.R;
+import com.dinuscxj.example.ppd.PPDTipsHelper;
 import com.dinuscxj.refresh.RecyclerRefreshLayout;
+import com.ppd.refreshhelper.config.BaseRefreshConfig;
+import com.ppd.refreshhelper.config.SimpleRefreshConfig;
 import com.ppd.refreshhelper.ihelper.IRefresher;
 import com.ppd.refreshhelper.ihelper.RefreshHelper;
+import com.ppd.refreshhelper.tips.TipsHelper;
+import com.ppd.refreshhelper.util.DensityUtil;
 
 
-public abstract class RecyclerFragment extends Fragment {
+public abstract class RecyclerFragment extends Fragment implements IRefresher{
 
     RefreshHelper mRefreshHelper;
 
@@ -27,15 +34,11 @@ public abstract class RecyclerFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mRefreshHelper = new RefreshHelper(createRefresher(), view);
-        mRefreshHelper.requestRefresh();
+        mRefreshHelper = new RefreshHelper(this, view);
+        onStartLoad();
     }
 
-    public void refresh(){
-        mRefreshHelper.requestRefresh();
-    }
-
-    protected abstract IRefresher createRefresher();
+    public abstract void onStartLoad();
 
     @Override
     public void onDestroyView() {
@@ -43,20 +46,68 @@ public abstract class RecyclerFragment extends Fragment {
         super.onDestroyView();
     }
 
-//    public HeaderViewRecyclerAdapter getHeaderAdapter() {
-//        return mRefreshHelper.getHeaderAdapter();
-//    }
 
-    public RecyclerView.Adapter getAdapter() {
+
+    @Override
+    public TipsHelper createTipsHelper() {
+        PPDTipsHelper tipsHelper = new PPDTipsHelper(mRefreshHelper.getRecyclerView());
+        tipsHelper.setOnEmpty(R.layout.tips_empty, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requestLoad();
+            }
+        });
+        tipsHelper.setOnError(R.layout.tips_loading_failed, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requestLoad();
+            }
+        });
+        return tipsHelper;
+    }
+
+    public void requestLoad() {
+        mRefreshHelper.requestLoad();
+    }
+
+    @NonNull
+    @Override
+    public RecyclerView.LayoutManager onCreateLayoutManager() {
+        return new LinearLayoutManager(getActivity());
+    }
+
+    @Override
+    public boolean allowPullToRefresh() {
+        return true;
+    }
+
+    @Override
+    public BaseRefreshConfig getRefreshConfig() {
+        return SimpleRefreshConfig.newInstance(RecyclerRefreshLayout.RefreshStyle.NORMAL)
+                .setIDragDistanceConverter(new ResistanceDragDistanceConvert(DensityUtil
+                        .getScreenHeight(getActivity())));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mRefreshHelper.onDestroy();
+    }
+
+    public void requestComplete(){
+        mRefreshHelper.requestComplete();
+    }
+
+    public void requestFailure(){
+        mRefreshHelper.requestFailure();
+    }
+
+    protected RecyclerView.Adapter getAdapter(){
         return mRefreshHelper.getAdapter();
     }
 
-    public RecyclerRefreshLayout getRecyclerRefreshLayout() {
-        return mRefreshHelper.getRecyclerRefreshLayout();
+    @Override
+    public boolean hasMore() {
+        return false;
     }
-
-    public RecyclerView getRecyclerView() {
-        return mRefreshHelper.getRecyclerView();
-    }
-
 }

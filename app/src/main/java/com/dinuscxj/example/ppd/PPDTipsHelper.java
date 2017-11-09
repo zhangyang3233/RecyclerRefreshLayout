@@ -15,7 +15,6 @@ public class PPDTipsHelper implements TipsHelper {
     protected final View mTagView;
     protected View.OnClickListener mEmptyOnclickListener;
     protected View.OnClickListener mErrorOnclickListener;
-    protected View.OnClickListener mLoadingOnclickListener;
     PPDTipsType mEmptyType;
     PPDTipsType mLoadingType;
     PPDTipsType mErrorType;

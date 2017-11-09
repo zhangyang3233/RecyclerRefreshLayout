@@ -3,7 +3,6 @@ package com.ppd.refreshhelper.ihelper;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -14,6 +13,12 @@ import com.ppd.refreshhelper.tips.TipsHelper;
 import com.ppd.refreshhelper.wrap.PPDRecyclerView;
 
 /**
+ * 使用方法，
+ * 1.布局请使用 RecyclerRefreshLayout + PPDRecyclerView, id需为： refresh_layout 和 recycler_view
+ * 2.在 Activity 或 Fragment 的 OnCreate方法中实例化即可
+ *
+ * @see PPDRecyclerView
+ * @see RecyclerRefreshLayout
  * Created by zhangyang131 on 2017/11/7.
  */
 public class RefreshHelper {
@@ -94,7 +99,7 @@ public class RefreshHelper {
         return mRecyclerView;
     }
 
-    public void requestRefresh() {
+    public void requestLoad() {
         if (isFirstPage()) {
             getTipsHelper().showLoading(true);
         } else {
@@ -133,7 +138,7 @@ public class RefreshHelper {
         }
     }
 
-    private void refreshStop(){
+    private void refreshStop() {
         mIsLoading = false;
         if (mRecyclerRefreshLayout != null) {
             mRecyclerRefreshLayout.setRefreshing(false);
@@ -145,7 +150,7 @@ public class RefreshHelper {
 
     public void requestComplete() {
         mPage++;
-        if(mLoadingMoreView != null){
+        if (mLoadingMoreView != null) {
             ((ILoadMoreStatus) mLoadingMoreView).onNormal();
         }
         refreshStop();
@@ -164,7 +169,8 @@ public class RefreshHelper {
         @Override
         public void onScrolled(RecyclerView view, int dx, int dy) {
             RecyclerView.LayoutManager manager = view.getLayoutManager();
-            if (manager.getChildCount() - mRecyclerView.getFootersCount()- mRecyclerView.getHeadersCount() > 0) {
+            if (manager.getChildCount() - mRecyclerView.getFootersCount() - mRecyclerView
+                    .getHeadersCount() > 0) {
                 int count = manager.getItemCount();
                 int last = ((RecyclerView.LayoutParams) manager
                         .getChildAt(manager.getChildCount() - 1).getLayoutParams())
