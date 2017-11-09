@@ -33,7 +33,6 @@ public class RefreshHelper {
     private final AutoLoadEventDetector mAutoLoadEventDetector;
     private View mLoadingMoreView;
 
-
     public RefreshHelper(IRefresher refresher, View parent) {
         mIRefresher = refresher;
         mParent = parent;
@@ -142,6 +141,14 @@ public class RefreshHelper {
         getTipsHelper().hideError();
         getTipsHelper().hideEmpty();
         getTipsHelper().hideLoading();
+    }
+
+    public void requestComplete() {
+        mPage++;
+        if(mLoadingMoreView != null){
+            ((ILoadMoreStatus) mLoadingMoreView).onNormal();
+        }
+        refreshStop();
         if (mAdapter.getItemCount() == 0) {
             getTipsHelper().showEmpty();
         } else if (mIRefresher.hasMore()) {
@@ -151,28 +158,19 @@ public class RefreshHelper {
         }
     }
 
-    public void requestComplete() {
-        mPage++;
-        if(mLoadingMoreView != null){
-            ((ILoadMoreStatus) mLoadingMoreView).onNormal();
-        }
-        refreshStop();
-    }
-
 
     public class AutoLoadEventDetector extends RecyclerView.OnScrollListener {
 
         @Override
         public void onScrolled(RecyclerView view, int dx, int dy) {
             RecyclerView.LayoutManager manager = view.getLayoutManager();
-            if (manager.getChildCount() > 0) {
+            if (manager.getChildCount() - mRecyclerView.getFootersCount()- mRecyclerView.getHeadersCount() > 0) {
                 int count = manager.getItemCount();
                 int last = ((RecyclerView.LayoutParams) manager
                         .getChildAt(manager.getChildCount() - 1).getLayoutParams())
                         .getViewAdapterPosition();
 
                 if (last == count - 1 && !mIsLoading) {
-                    Log.e("onLoadMore", "onLoadMore");
                     onLoadMore();
                 }
             }
@@ -184,6 +182,7 @@ public class RefreshHelper {
         @Override
         public void onRefresh() {
             mIsLoading = true;
+            mPage = INIT_PAGE_START;
             mIRefresher.onRefresh();
         }
     }

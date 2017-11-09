@@ -6,6 +6,7 @@ import android.view.animation.Interpolator;
 
 import com.dinuscxj.refresh.IDragDistanceConverter;
 import com.dinuscxj.refresh.RecyclerRefreshLayout;
+import com.ppd.refreshhelper.adapter.LoadMoreView;
 import com.ppd.refreshhelper.util.DensityUtil;
 
 

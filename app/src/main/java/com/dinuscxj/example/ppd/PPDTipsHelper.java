@@ -25,9 +25,8 @@ public class PPDTipsHelper implements TipsHelper {
         mEmptyOnclickListener = onClickListener;
     }
 
-    public void setOnLoading(int loadingViewRes, View.OnClickListener onClickListener) {
+    public void setOnLoading(int loadingViewRes) {
         mLoadingType = new PPDTipsType(loadingViewRes);
-        mLoadingOnclickListener = onClickListener;
     }
 
     public void setOnError(int errorViewRes, View.OnClickListener onClickListener) {

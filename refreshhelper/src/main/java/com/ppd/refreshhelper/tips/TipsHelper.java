@@ -11,7 +11,8 @@ public interface TipsHelper {
 
     void hideLoading();
 
-    void showError(boolean firstPage, Throwable error);
+    void
+    showError(boolean firstPage, Throwable error);
 
     void hideError();
 

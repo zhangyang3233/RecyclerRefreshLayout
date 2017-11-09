@@ -31,8 +31,20 @@ public class PPDMainActivity extends BaseListActivity {
         return R.layout.activity_ppdmain;
     }
 
+    int count;
+
     @Override
     public void onRefresh() {
+        count++;
+        if (count % 3 == 0) {
+            mItemList.clear();
+            requestFailure();
+            return;
+        }else if(count % 4 == 0){
+            mItemList.clear();
+            requestComplete();
+            return;
+        }
         NetAsyncTask task = new NetAsyncTask() {
             @Override
             public void onResult(ArrayList<OpenProjectModel> result) {

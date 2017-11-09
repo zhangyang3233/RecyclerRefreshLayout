@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.dinuscxj.example.R;
 import com.dinuscxj.example.demo.ResistanceDragDistanceConvert;
 import com.dinuscxj.refresh.RecyclerRefreshLayout;
 import com.ppd.refreshhelper.config.BaseRefreshConfig;
@@ -45,7 +46,20 @@ public abstract class BaseListActivity extends AppCompatActivity implements IRef
 
     @Override
     public TipsHelper createTipsHelper() {
-        return new PPDTipsHelper(mRefreshHelper.getRecyclerView());
+        PPDTipsHelper tipsHelper = new PPDTipsHelper(mRefreshHelper.getRecyclerView());
+        tipsHelper.setOnEmpty(R.layout.tips_empty, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requestLoad();
+            }
+        });
+        tipsHelper.setOnError(R.layout.tips_loading_failed, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requestLoad();
+            }
+        });
+        return tipsHelper;
     }
 
     @Override

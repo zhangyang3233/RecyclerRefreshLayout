@@ -1,4 +1,4 @@
-package com.ppd.refreshhelper.config;
+package com.ppd.refreshhelper.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
@@ -44,7 +44,7 @@ public class LoadMoreView extends FrameLayout implements ILoadMoreStatus {
         super(context, attrs, defStyleAttr);
     }
 
-    static LoadMoreView newInstance(Context context) {
+    public static LoadMoreView newInstance(Context context) {
         LoadMoreView loadMoreView = (LoadMoreView) LayoutInflater.from(context).inflate(R.layout
                 .load_more_layout, null);
         return loadMoreView;
